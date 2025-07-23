@@ -1,16 +1,15 @@
 class Solution(object):
     def longestConsecutive(self, nums):
-        nums_set = set(nums) # change it to set for O(1) search
+        nums_set = set(nums)
         longest = 0
 
-        for n in nums_set:
-            # Check if n is the smallest number in the sequence
-            # i.e. if n - 1 is not present
-            if n - 1 not in nums_set: 
+        for num in nums_set:
+            # n-1 check to see if its the smallest
+            # number in the sequence
+            if num - 1 not in nums_set:
                 length = 1
-                while (n+length) in nums_set: # this will count up to the longest sequence
+                while num + length in nums_set:
                     length += 1
-                
-                longest = max(longest, length) # update the longest sequence count
+                longest = max(longest, length)
         
         return longest
