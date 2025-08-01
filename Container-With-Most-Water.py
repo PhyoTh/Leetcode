@@ -1,19 +1,17 @@
-class Solution:
-    def maxArea(self, height: List[int]) -> int:
-        low = 0
-        high = len(height) - 1
-        max_area = 0
+class Solution(object):
+    def maxArea(self, height):
+        # trick: is to move the pointers so that it finds the biggest height
+        # while shirking down the width
+        res = 0
+    
+        left = 0
+        right = len(height) - 1
+        while left < right:
+            res = max(res, (right - left) * min(height[left], height[right]))
 
-        def get_area(height: List[int], low: int, high: int) -> int:
-            return min(height[low], height[high]) * (high - low)
-
-        while low < high:
-            curr_area = get_area(height, low, high)
-            max_area = max(max_area, curr_area)
-
-            # determine if we should increment low or decrement high
-            if height[low] < height[high]:
-                low += 1
+            if height[left] > height [right]:
+                right -= 1 
             else:
-                high -= 1
-        return max_area
+                left += 1
+    
+        return res
