@@ -1,34 +1,26 @@
 class Solution(object):
-    # approach: sliding + binary search
     def characterReplacement(self, s, k):
-        low = 1 # assume that we can def make a character long because len(s)>=1
-        high = len(s) + 1 # just because we started at low=1, and longest is high-low
-        while low + 1 < high:
-            # have to add low,cuz low start anywhere
-            mid = low + ((high - low) // 2)
+        # sliding window slow, without frequency map
+        # this algorithm marks each unique char in the string as fixed 
+        # like an idiodt and loop over each unique char
+        letters_set = set(s) # so it only contains the unique chars without dups
+        max_window = 0
 
-            # check if we can make valid substring with the length of #mid
-            if self.canMakeValidSubstring(s, k, mid):
-                low = mid # true: current min length of substring, find larger
-            else:# false: couldn't find any with that mid length, have to trim window
-                high = mid 
+        for letter in letters_set:
+            count = 0
+            start = 0 
+            for end in range(len(s)):
+                # count up the unique letter when expanding the end of window
+                if s[end] == letter:
+                    count += 1
 
-        return low
-
-    def canMakeValidSubstring(self, s, k, mid):
-        freq_map = {} # to keep track of fixed letter and changable letters
-        max_freq = 0
-        start = 0
-        for end in range(len(s)):
-            freq_map[s[end]] = freq_map.get(s[end], 0) + 1
+                # end-start+1 = window
+                # as long as window - fixed_letter_count is > k, we need to shrink
+                while end-start+1 - count > k:
+                    if s[start] == letter:
+                        count -= 1
+                    start += 1
+                    
+                max_window = max(max_window, end-start+1)
         
-            # if its bigger than #mid window, then slide right
-            if end - start + 1 > mid: 
-                freq_map[s[start]] -= 1 # before sliding remember to update freq_map
-                start += 1
-
-            max_freq = max(max_freq, freq_map[s[end]]) # this is the fix letter
-            if mid - max_freq <= k: # there is a valid substring with #k replacements
-                return True
-
-        return False # couldn't find any valid substring:(
+        return max_window
