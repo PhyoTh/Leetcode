@@ -5,32 +5,25 @@
 #         self.next = next
 class Solution(object):
     def reorderList(self, head):
-        if head is None or head.next is None:
-            return
-
-        # step 1: find the middle of the list
-        slow = head
-        fast = head
+        # practice
+        # reverse the half of the list
+        # and merge the two halfs
+        slow, fast = head, head
         while fast and fast.next:
             slow = slow.next
             fast = fast.next.next
 
-        # step 2: reverse the second half of the list
-        prev = None
-        curr = slow # right now slow is at the middle of the list
-        while curr:
-            front = curr.next
-            curr.next = prev
+        prev, walker = None, slow
+        while walker:
+            front = walker.next
+            walker.next = prev
 
-            prev = curr
-            curr = front
+            prev = walker
+            walker = front
 
-        # step 3: merge the two halfs of the list
-        first = head
-        second = prev
-        while second.next: # we can do this for this problem because we know that they both have same length or second half is the smaller one
-            t1, t2 = first.next, second.next
-            first.next = second
-            second.next = t1
+        while prev.next:
+            t1, t2 = head.next, prev.next
+            head.next = prev
+            prev.next = t1
 
-            first, second = t1, t2
+            head, prev = t1, t2
