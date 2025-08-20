@@ -6,11 +6,12 @@
 
 class Solution(object):
     def hasCycle(self, head):
-        # fast slow approach
-        if head is None:
+        if head is None: # be careful of this case
             return False
-        slow = head
-        fast = head.next
+
+        '''
+        '''
+        slow, fast = head, head.next
         while slow != fast:
             if fast is None or fast.next is None:
                 return False
