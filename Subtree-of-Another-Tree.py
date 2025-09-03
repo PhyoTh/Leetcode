@@ -8,16 +8,16 @@ class Solution(object):
     def isSubtree(self, root, subRoot):
         if subRoot is None:
             return True
-        elif root is None:
+        if root is None:
             return False
-        elif self.sameTree(root, subRoot):
+        elif self.isSameTree(root, subRoot):
             return True
         
         left = self.isSubtree(root.left, subRoot)
         right = self.isSubtree(root.right, subRoot)
         return left or right
-
-    def sameTree(self, root1, root2):
+    
+    def isSameTree(self, root1, root2):
         if root1 is None and root2 is None:
             return True
         elif root1 is None or root2 is None:
@@ -25,6 +25,6 @@ class Solution(object):
         elif root1.val != root2.val:
             return False
         
-        left = self.sameTree(root1.left, root2.left)
-        right = self.sameTree(root1.right, root2.right)
+        left = self.isSameTree(root1.left, root2.left)
+        right = self.isSameTree(root1.right, root2.right)
         return left and right
