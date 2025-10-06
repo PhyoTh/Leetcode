@@ -1,39 +1,31 @@
 class Solution(object):
-    ''' pay attention to how they check if the current window is valid
-        # first, count the number of chars that we need to meet in order for substring to become valid
-        # second, then increment "formed" counter when the condition of unique_char_count in current_window == required_char_count in t'''
     def minWindow(self, s, t):
-        # unoptimized sliding minWindow
-        if not s or not t:
-            return ""
+        min_window = (float("inf"), 0, 0) # (widow width, start, end)
 
-        min_window = (float("inf"), None, None) # (window_width, left ptr, right ptr)
+        # current window
+        curr_freq = {} # keep track of char count in current window
+        curr_match_count = 0 # keep track of unique matched chars with target in current window
 
-        current_window_dict = {}
-        formed_char_count = 0
-
+        # target
         from collections import Counter
-        dict_t = Counter(t) # to compare with the current window to check for validity
-        required_char_count = len(dict_t) # to compare with formed_char_count
-
-        # if substring is valid, move up start ptr to check if its stil valid
-        # if substring is not valid, keep moving up end ptr to check if its valid 
+        target_freq = Counter(t)
+        unique_char_count = len(target_freq)
+    
         start = 0
         for end in range(len(s)):
-            current_window_dict[s[end]] = current_window_dict.get(s[end], 0) + 1
+            curr_freq[s[end]] = curr_freq.get(s[end], 0) + 1
 
-            # look up to see if any of the unique char in t has been formed
-            if s[end] in dict_t and current_window_dict[s[end]] == dict_t[s[end]]:
-                formed_char_count += 1
+            if s[end] in target_freq and curr_freq[s[end]] == target_freq[s[end]]:
+                curr_match_count += 1
             
-            # if the current window is valid
-            while start <= end and formed_char_count == required_char_count:
-                if end-start+1 < min_window[0]: # check and update if its smallest
+            while curr_match_count == unique_char_count:
+                if end-start+1 < min_window[0]: # current window smaller than the minimum recorded
                     min_window = (end-start+1, start, end)
                 
-                if s[start] in dict_t and current_window_dict[s[start]] == dict_t[s[start]]:
-                    formed_char_count -= 1
-                current_window_dict[s[start]] -= 1
+                # move start window by 1
+                if s[start] in target_freq and curr_freq[s[start]] == target_freq[s[start]]:
+                    curr_match_count -= 1
+                curr_freq[s[start]] -= 1
                 start += 1
-            
-        return "" if min_window[0] == float("inf") else s[min_window[1]:min_window[2]+1]
+
+        return "" if min_window[0] == float("inf") else s[min_window[1] : min_window[2]+1]
