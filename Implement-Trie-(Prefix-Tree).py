@@ -1,59 +1,43 @@
-class TrieNode():
-    def __init__(self):
-        self.list = [None] * 26
-        self.isEnd = False
+class Node:
     
-    def setEnd(self):
-        self.isEnd = True
+    def __init__(self, char: str, last: bool, nxt: dict):
+        self.char = char
+        self.last = last
+        self.nxt = nxt
 
-    def getEnd(self):
-        return self.isEnd
-
-    def getKey(self, key):
-        return self.list[ord(key) - ord('a')]
-
-    def linkNodes(self, key, node):
-        self.list[ord(key) - ord('a')] = node
-
-class Trie(object):
+class Trie:
 
     def __init__(self):
-        self.root = TrieNode()
+        self.root = Node("", False, {})
 
-    def insert(self, word):
+    def insert(self, word: str) -> None:
         walker = self.root
+        for char in word:
+            if char not in walker.nxt:
+                insert_node = Node(char, False, {})
+                walker.nxt[char] = insert_node
 
-        for ch in word:
-            nxt = walker.getKey(ch)
-            if nxt is None: # if there doesn't exist such key
-                nxt = TrieNode()
-                walker.linkNodes(ch, nxt)
-            walker = nxt
-        walker.setEnd()
-        
+            walker = walker.nxt[char]
+        walker.last = True
 
-    def search(self, word):
+    def search(self, word: str) -> bool:
         walker = self.root
-
-        for ch in word:
-            nxt = walker.getKey(ch)
-            if nxt is None:
+        for char in word:
+            if char not in walker.nxt:
                 return False
-            
-            walker = nxt
-        return walker.getEnd()
+            walker = walker.nxt[char]
 
+        return walker.last
 
-    def startsWith(self, prefix):
+    def startsWith(self, prefix: str) -> bool:
         walker = self.root
-
-        for ch in prefix:
-            nxt = walker.getKey(ch)
-            if nxt is None:
+        for char in prefix:
+            if char not in walker.nxt:
                 return False
-        
-            walker = nxt
+            walker = walker.nxt[char]
+
         return True
+
 
 # Your Trie object will be instantiated and called as such:
 # obj = Trie()
