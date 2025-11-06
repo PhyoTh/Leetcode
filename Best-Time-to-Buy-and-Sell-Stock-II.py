@@ -1,16 +1,17 @@
-class Solution(object):
-    def maxProfit(self, prices):
-        index = 0
-        total_profit = 0
-        local_max = prices[0]
-        local_min = prices[0]
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        buy_pointer = 0
+        sell_pointer = 0
 
-        while index < len(prices) - 1:
-            while (index < len(prices)-1) and (prices[index] >= prices[index+1]):
-                index += 1
-            local_min = prices[index]
-            while (index < len(prices)-1) and (prices[index] <= prices[index+1]):
-                index += 1
-            local_max = prices[index]
-            total_profit += local_max - local_min
-        return total_profit
+        max_profit = 0
+        for i, price in enumerate(prices):
+            if prices[sell_pointer] <= price:
+                sell_pointer = i
+            else:
+                max_profit += prices[sell_pointer] - prices[buy_pointer]
+                buy_pointer = i
+                sell_pointer = i
+        
+        if buy_pointer != sell_pointer:
+            max_profit += prices[sell_pointer] - prices[buy_pointer]
+        return max_profit
