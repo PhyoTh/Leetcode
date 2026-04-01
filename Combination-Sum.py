@@ -1,39 +1,31 @@
-'''
-candidates = [2, 3, 6, 7], target = 7
-result = [[3, 2, 2]]
-
-backtrack:
-combination = [2], remain = 5, i = 0
-combination = [2, 2], remain = 3, i = 0
-combination = [2, 2, 2], remain = 1, i = 0
-combiination = [2, 2, 2, 2], remain = -1, i = 0
-
-combination = [3], remain = 4, i = 1 <= this is why you need to pop
-combination = [3, 2], remain = 2, i = 0
-combination = [3, 2, 2], remain = 0, i = 0
-combiination = [3, 2, 2, 2], remain = -2, i = 0
-'''
-
-class Solution(object):
-    def combinationSum(self, candidates, target):
-        self.result = []
-        self.backtrack(target, candidates, [], 0)
-        return self.result
-    
-    def backtrack(self, remain, candidates, combination, start):
-        if remain == 0:
-            # found ! then make a deep copy of current combination to the result
-            self.result.append(list(combination)) 
-            return
-        elif remain < 0:
-            return # exceeds the target,z    don't do anything
-        
-        for i in range(start, len(candidates)):
-            # try out the first candidate
-            combination.append(candidates[i])
-
-            # try out this candidate with other candidates
-            self.backtrack(remain - candidates[i], candidates, combination, i) 
-
-            # pop it, so in the next iteration you can swap out with the next candidate
-            combination.pop()
+1class Solution:
+2    '''
+3    candidates = [2, 3, 6, 7]
+4
+5    stack = [], remaining = 7
+6        stack = [2], remaining = 5
+7            stack = [2, 2], remaining = 3
+8                stack = [2, 2, 2], remaining = 1
+9                    stack = [2, 2, 2, 2], remaining = -1
+10                    stack = [2, 2, 2, 3], remaining = -2
+11                    stack = [2, 2, 2, 6], remaining = -5
+12                    stack = [2, 2, 2, 7], remaining = -6
+13                stack = [2, 2, 3], remaining = 0
+14                stack = [2, 3, 2], remaining = 0
+15    '''
+16    def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+17        result = []
+18        def rollout(stack: List[int], remaining: int, start: int):
+19            if remaining == 0:
+20                result.append(stack.copy())
+21                return
+22            elif remaining < 0:
+23                return
+24
+25            for index, candidate in enumerate(candidates[start:]):
+26                stack.append(candidate)
+27                rollout(stack, remaining - candidate, start + index)
+28                stack.pop()
+29
+30        rollout([], target, 0)
+31        return result
