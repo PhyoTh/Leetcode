@@ -1,90 +1,32 @@
-# Definition for a binary tree node.
-# class TreeNode(object):
-#     def __init__(self, val=0, left=None, right=None):
-#         self.val = val
-#         self.left = left
-#         self.right = right
-
-'''
-        5
-    /       \
-    2         7
-/      \     /   \
-1       3    6    8
-
-# iterative
-level-Q: 5
-Child-Q: 2 7
-Result: 
-
-level-Q: 2 7
-Child-Q: 1 3 6 8
-Result: 5
-
-
-# recursive
-V L R
-5 2 7
-
-2 1 3
-7 6 8
-
-1 n n
-3 n n
-6 n n
-8 n n
-
-q : 1
-'''
-class Solution(object):
-    '''
-    iterative approach
-    '''
-    # def levelOrder(self, root):
-        # if root is None:
-        #     return []
-
-        # from collections import deque
-        # level_q = deque([root]) # 9 20
-        # result = [] # 3
-
-        # while level_q: # iterate each level
-        #     level = [] 
-
-        #     for _ in range(len(level_q)): # iterate the whole level
-        #         current = level_q.popleft()
-        #         level.append(current.val)
-
-        #         if current.left:
-        #             level_q.append(current.left)
-        #         if current.right:
-        #             level_q.append(current.right)
-
-        #     result.append(level)
-
-        # return result
-
-    '''
-    recursive approach
-    '''
-    def levelOrder(self, root):
-        if root is None:
-            return []
-        result = []
-
-        self.level_traverse(root, 0, result)
-
-        return result
-
-    def level_traverse(self, root, level, result):
-        if len(result) == level:
-            result.append([])
-        
-        result[level].append(root.val)
-
-        if root.left:
-            self.level_traverse(root.left, level + 1, result)
-        if root.right:
-            self.level_traverse(root.right, level + 1, result)
-        
-        return 
+1# Definition for a binary tree node.
+2# class TreeNode:
+3#     def __init__(self, val=0, left=None, right=None):
+4#         self.val = val
+5#         self.left = left
+6#         self.right = right
+7class Solution:
+8    def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
+9        if root is None:
+10            return []
+11
+12        from collections import deque
+13        result = []
+14        que = deque([root])
+15
+16        while que:
+17            level = []
+18
+19            n = len(que)
+20            for _ in range(n):
+21                node = que.popleft() # pop from left
+22                level.append(node.val)
+23
+24                if node.left:
+25                    que.append(node.left) # append from right
+26                if node.right:
+27                    que.append(node.right)
+28
+29            result.append(level.copy())
+30        
+31        return result
+32            
