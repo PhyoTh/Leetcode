@@ -1,19 +1,22 @@
-class Solution(object):
-    def characterReplacement(self, s, k):
-        max_window = 0
-
-        freq_map = {}
-        max_freq = 0
-
-        start = 0
-        for end in range(len(s)):
-            freq_map[s[end]] = freq_map.get(s[end], 0) + 1
-            max_freq = max(max_freq, freq_map[s[end]]) # this is all time max freq
-
-            if end-start+1 - max_freq > k: # current window has > k replacements
-                freq_map[s[start]] -= 1 # update the frequency
-                start += 1 # move the window without shrinking
-
-            max_window = end - start + 1 # max_window will be the current window because we didn't shrink
-        
-        return max_window
+1class Solution:
+2    def characterReplacement(self, s: str, k: int) -> int:
+3        n = len(s)
+4        counter = {}
+5        longest = float('-inf')
+6        max_freq = None
+7
+8        left = 0
+9        for right in range(n):
+10            counter[s[right]] = counter.get(s[right], 0) + 1
+11            max_freq = max(counter.values())
+12
+13            while (right - left + 1) - max_freq > k:
+14                counter[s[left]] -= 1
+15                if counter[s[left]] == 0:
+16                    del counter[s[left]]
+17                max_freq = max(counter.values())
+18                left += 1
+19
+20            longest = max(longest, right - left + 1)
+21
+22        return longest
