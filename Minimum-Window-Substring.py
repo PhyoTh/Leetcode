@@ -1,31 +1,30 @@
-class Solution(object):
-    def minWindow(self, s, t):
-        min_window = (float("inf"), 0, 0) # (widow width, start, end)
-
-        # current window
-        curr_freq = {} # keep track of char count in current window
-        curr_match_count = 0 # keep track of unique matched chars with target in current window
-
-        # target
-        from collections import Counter
-        target_freq = Counter(t)
-        unique_char_count = len(target_freq)
-    
-        start = 0
-        for end in range(len(s)):
-            curr_freq[s[end]] = curr_freq.get(s[end], 0) + 1
-
-            if s[end] in target_freq and curr_freq[s[end]] == target_freq[s[end]]:
-                curr_match_count += 1
-            
-            while curr_match_count == unique_char_count:
-                if end-start+1 < min_window[0]: # current window smaller than the minimum recorded
-                    min_window = (end-start+1, start, end)
-                
-                # move start window by 1
-                if s[start] in target_freq and curr_freq[s[start]] == target_freq[s[start]]:
-                    curr_match_count -= 1
-                curr_freq[s[start]] -= 1
-                start += 1
-
-        return "" if min_window[0] == float("inf") else s[min_window[1] : min_window[2]+1]
+1from collections import Counter
+2class Solution:
+3    def minWindow(self, s: str, t: str) -> str:
+4        t_dict = Counter(t) # O(n)
+5        smallest = None # (start, end)
+6
+7        s_dict = {}
+8        seen_unique_chars = 0 # only increment if unique chars in t_dict count match
+9        left = 0
+10        for right in range(len(s)): # O(n)
+11            s_dict[s[right]] = s_dict.get(s[right], 0) + 1
+12            if s[right] in t_dict.keys() and s_dict[s[right]] == t_dict[s[right]]:
+13                seen_unique_chars += 1
+14
+15            # hit the unique chars, then you need to search min substring
+16            while seen_unique_chars == len(t_dict):
+17                if smallest is None:
+18                    smallest = (left, right + 1)
+19                if right - left + 1 < smallest[1] - smallest[0]:
+20                        smallest = (left, right + 1)
+21
+22                s_dict[s[left]] -= 1
+23                if s[left] in t_dict and s_dict[s[left]] < t_dict[s[left]]:
+24                    seen_unique_chars -= 1
+25
+26                if s_dict[s[left]] == 0:
+27                    del s_dict[s[left]]
+28                left += 1
+29        
+30        return s[smallest[0]:smallest[1]] if smallest else ""
