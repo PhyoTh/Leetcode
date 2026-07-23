@@ -1,41 +1,41 @@
 class Node:
-    def __init__(self, char = ''):
+    
+    def __init__(self, char: str, last: bool, nxt: dict):
         self.char = char
-        self.end = False
-        self.next = {}
+        self.last = last
+        self.nxt = nxt
 
 class Trie:
+
     def __init__(self):
-        self.root = Node()
+        self.root = Node("", False, {})
 
     def insert(self, word: str) -> None:
         walker = self.root
-
         for char in word:
-            if char not in walker.next:
-                walker.next[char] = Node(char)
-            walker = walker.next[char]
+            if char not in walker.nxt:
+                insert_node = Node(char, False, {})
+                walker.nxt[char] = insert_node
 
-        walker.end = True
+            walker = walker.nxt[char]
+        walker.last = True
 
     def search(self, word: str) -> bool:
         walker = self.root
-
         for char in word:
-            if char not in walker.next:
+            if char not in walker.nxt:
                 return False
-            walker = walker.next[char]
-        
-        return walker.end
+            walker = walker.nxt[char]
+
+        return walker.last
 
     def startsWith(self, prefix: str) -> bool:
         walker = self.root
-
         for char in prefix:
-            if char not in walker.next:
+            if char not in walker.nxt:
                 return False
-            walker = walker.next[char]
-        
+            walker = walker.nxt[char]
+
         return True
 
 
