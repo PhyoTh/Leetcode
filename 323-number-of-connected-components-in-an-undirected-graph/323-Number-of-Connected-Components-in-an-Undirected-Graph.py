@@ -3,11 +3,12 @@ class Solution:
         parents = [i for i in range(n)]
 
         def find(node: int) -> int:
-            parent_node = parents[node]
-            while parent_node != node:
-                node = parent_node
-                parent_node = parents[node]
-            return parent_node
+            root = node
+            while parents[root] != root:
+                root = parents[root]
+            while parents[node] != root:
+                node, parents[node] = parents[node], root
+            return root
         
         def union(a: int, b: int) -> None:
             parent_a = find(a)
