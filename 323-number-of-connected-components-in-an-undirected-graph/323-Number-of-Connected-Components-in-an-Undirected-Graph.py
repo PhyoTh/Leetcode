@@ -1,28 +1,30 @@
 class Solution:
     def countComponents(self, n: int, edges: List[List[int]]) -> int:
-        adj_list = [[] for _ in range(n)]
-        for a, b in edges:
-            adj_list[a].append(b)
-            adj_list[b].append(a)
-        
-        unvisited = set()
-        for i in range(n):
-            unvisited.add(i)
-        
-        component = 0
-        while unvisited:
-            component += 1
-            first = next(iter(unvisited))
-            stack = [first]
-            unvisited.remove(first)
-            while stack:
-                node = stack.pop()
+        parents = [i for i in range(n)]
 
-                for neighbor in adj_list[node]:
-                    if neighbor not in unvisited:
-                        continue
-                    
-                    stack.append(neighbor)
-                    unvisited.remove(neighbor)
+        def find(node: int) -> int:
+            parent_node = parents[node]
+            while parent_node != node:
+                node = parent_node
+                parent_node = parents[node]
+            return parent_node
         
-        return component
+        def union(a: int, b: int) -> None:
+            parent_a = find(a)
+            parent_b = find(b)
+            if parent_a == parent_b:
+                return
+            
+            if parent_a < parent_b:
+                parents[parent_b] = parent_a
+            else:
+                parents[parent_a] = parent_b
+        
+        for a, b in edges:
+            union(a, b)
+        
+        unique_roots = set()
+        for i in range(n):
+            unique_roots.add(find(i))
+        return len(unique_roots)
+    
