@@ -3,22 +3,29 @@ class Solution:
         if n - 1 != len(edges):
             return False
         
-        adj_list = [[] for _ in range(n)]
-        for a, b in edges:
-            adj_list[a].append(b)
-            adj_list[b].append(a)
+        parent = [i for i in range(n)]
+
+        def find(node: int):
+            parent_node = parent[node]
+            while parent_node != node:
+                node = parent_node
+                parent_node = parent[node]
+            return parent_node
         
-        stack = [0]
-        visited = set([0])
-
-        while stack:
-            node = stack.pop()
-
-            for neighbor in adj_list[node]:
-                if neighbor in visited:
-                    continue
-                
-                stack.append(neighbor)
-                visited.add(neighbor)
+        def union(a: int, b: int) -> bool:
+            a_parent = find(a)
+            b_parent = find(b)
+            if a_parent == b_parent:
+                return False
             
-        return len(visited) == n
+            if a_parent < b_parent:
+                parent[b_parent] = a_parent
+            else:
+                parent[a_parent] = b_parent
+            return True
+        
+        for a, b in edges:
+            if not union(a, b):
+                return False
+        
+        return True
