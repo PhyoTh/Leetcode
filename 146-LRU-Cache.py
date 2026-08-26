@@ -1,54 +1,84 @@
+'''
+["LRUCache", "put", "put", "get", "put", "get", "put", "get", "get", "get"]
+[[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]
+
+capacity = 2
+{
+3
+1
+}
+
+[]
+'''
 class Node:
-    def __init__(self, val=-1, key=-1, next=None, prev=None):
-        self.val = val
+    def __init__(self, key: int, val: int):
         self.key = key
-        self.next = next
-        self.prev = prev
+        self.val = val
+        self.next = None
+        self.prev = None
 
 class LRUCache:
     def __init__(self, capacity: int):
-        self.head = Node()
-        self.tail = Node()
-        self.head.next = self.tail
-        self.tail.prev = self.head
         self.capacity = capacity
         self.dict = {}
-
-    def insert(self, insert_this):
-        prev_tail = self.tail.prev
-        prev_tail.next = insert_this
-        self.tail.prev = insert_this
-        insert_this.next = self.tail
-        insert_this.prev = prev_tail
-
-    def remove(self, remove_this):
-        prev = remove_this.prev
-        prev.next = remove_this.next
-        remove_this.next.prev = prev
+        self.nodes = {}
+        self.head = Node(-1, -1)
+        self.tail = None
 
     def get(self, key: int) -> int:
-        if key not in self.dict.keys():
+        if key not in self.dict:
             return -1
-
-        here = self.dict[key]
-        self.remove(here)
-        self.insert(here)
-        return here.val
+        
+        cur_node = self.nodes[key]
+        if cur_node != self.tail:
+            cur_node.prev.next = cur_node.next
+            cur_node.next.prev = cur_node.prev
+            
+            self.tail.next = cur_node
+            cur_node.prev = self.tail
+            cur_node.next = None
+            self.tail = cur_node
+        return self.dict[key]
 
     def put(self, key: int, value: int) -> None:
         if key in self.dict:
-            here = self.dict[key]
-            here.val = value
-            self.remove(here)
-            self.insert(here)
+            if key not in self.nodes:
+                print("Sequence reference for this {key} not found...")
+                return
+            cur_node = self.nodes[key]
+            if cur_node != self.tail:
+                cur_node.prev.next = cur_node.next
+                cur_node.next.prev = cur_node.prev
+                
+                self.tail.next = cur_node
+                cur_node.prev = self.tail
+                cur_node.next = None
+                self.tail = cur_node
         else:
-            if len(self.dict) == self.capacity:
-                here = self.head.next
-                self.remove(here)
-                del self.dict[here.key]
-            temp = Node(value, key)
-            self.dict[key] = temp
-            self.insert(temp)
+            if len(self.nodes) == self.capacity:
+                remove_node = self.head.next
+                self.head.next = remove_node.next
+                if remove_node.next:
+                    remove_node.next.prev = self.head
+                if self.tail == remove_node:
+                    self.tail = None
+
+                del self.nodes[remove_node.key]
+                del self.dict[remove_node.key]
+                del remove_node
+            
+            node = Node(key, value)
+            if self.tail == None:
+                self.head.next = node
+                node.prev = self.head
+            else:
+                self.tail.next = node
+                node.prev = self.tail
+            
+            self.tail = node
+            self.nodes[key] = node
+        self.dict[key] = value
+
 
 # Your LRUCache object will be instantiated and called as such:
 # obj = LRUCache(capacity)
