@@ -15,8 +15,7 @@ class Solution:
         for char in s:
             if char == "0":
                 zeros += 1
-            else:
-                if zeros > 0:
-                    seconds = max(zeros, seconds + 1)
+            elif zeros > 0:
+                seconds = max(zeros, seconds + 1)
         
         return seconds
